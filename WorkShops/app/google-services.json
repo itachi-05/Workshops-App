@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1013320565507",
+    "project_id": "workshops-820fa",
+    "storage_bucket": "workshops-820fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013320565507:android:c62c66142a6b5d87f6df36",
+        "android_client_info": {
+          "package_name": "com.alpharays.workshops"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013320565507-26ic3csi5du6cmvqus0cu6p4o6ln0s1a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alpharays.workshops",
+            "certificate_hash": "c46f4410f91f5fffc49acabd59623bc59bf788ba"
+          }
+        },
+        {
+          "client_id": "1013320565507-7d1qa7itioftivsn2legt55a47diifd4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY7B_chH-9_7jYsuALmC-USeCmBejOrro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013320565507-7d1qa7itioftivsn2legt55a47diifd4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
