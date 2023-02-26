@@ -22,10 +22,11 @@ import com.alpharays.workshops.R
 import com.alpharays.workshops.data.entities.Workshop
 import com.alpharays.workshops.databinding.FragmentworkshopBinding
 import com.alpharays.workshops.getBooleanLiveData
-import com.alpharays.workshops.ui.dashboard.DashboardFragment
 import com.alpharays.workshops.viewmodels.UserWorkshopViewModel
 import com.alpharays.workshops.viewmodels.WorkShopsViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -37,6 +38,7 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     private lateinit var builder: AlertDialog.Builder
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
+    private lateinit var sharedPreferences3: SharedPreferences
     private var currentUserId = ""
 
     override fun onCreateView(
@@ -238,9 +240,16 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     private fun getWorkShopsFromDB() {
         binding.workshopsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = WorkshopAdapter(object : WorkshopAdapter.OnApplyClickListener {
-            override fun onApplyClicked(id: Long) = initializingUserWorkShopViewModel(id)
-        }, binding.root, requireContext(), mapOfImages)
+        val adapter = WorkshopAdapter(
+            applyButtonStatus = true,
+            deleteButtonStatus = false,
+            onApplyClickListener = object : WorkshopAdapter.OnApplyClickListener {
+                override fun onApplyClicked(id: Long) = initializingUserWorkShopViewModel(id)
+            },
+            view = binding.root,
+            context = requireContext(),
+            listOfImages = mapOfImages
+        )
 
         binding.workshopsRecyclerView.adapter = adapter
         workShopsViewModel = ViewModelProvider(
@@ -265,10 +274,7 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     }
 
 
-    private fun checkingIfUserLoggedIn(
-        workShopId: Long,
-        myWorkShopsViewModel: WorkShopsViewModel
-    ) {
+    private fun checkingIfUserLoggedIn(workShopId: Long, myWorkShopsViewModel: WorkShopsViewModel) {
         sharedPreferences = requireContext().getSharedPreferences(
             "sharingUserDataUsingSP#01",
             AppCompatActivity.MODE_PRIVATE
@@ -280,15 +286,7 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
             if (isLoggedIn) {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val workshop = myWorkShopsViewModel.getWorkshopById(workShopId)
-                    if (workshop != null) {
-                        Log.i("workshopDetails", workshop.toString())
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.post {
-                            alertBuilder(workShopId, currentUserId, workshop.name)
-                        }
-                    } else {
-                        Log.i("workshopDetails", "dbError")
-                    }
+                    validatingId(workshop, workShopId, currentUserId.toLong())
                 }
             } else {
                 (activity as MainActivity).showingLoginPage()
@@ -300,14 +298,49 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
         loginStatusLiveData.observe(requireActivity(), loginStatusObserver)
     }
 
+    private fun validatingId(workshop: Workshop?, workShopId: Long, currentUserId: Long) {
+        sharedPreferences3 =
+            requireContext().getSharedPreferences(
+                "sharingDataUsingSP#03",
+                AppCompatActivity.MODE_PRIVATE
+            )
+        val arrayListJsonString = sharedPreferences3.getStringSet("workshopsList", null)
 
-    private fun alertBuilder(workShopId: Long, currentID: String, workshopName: String) {
+        val gson = Gson()
+        val workshops = mutableListOf<Workshop>()
+        if (arrayListJsonString != null) {
+            for (json in arrayListJsonString) {
+                val workshopData = gson.fromJson(json, Workshop::class.java)
+                workshops.add(workshopData)
+            }
+        }
+        var checkWorkShopStatus = false
+        for (i in workshops.indices) {
+            Log.i("finalCheckingOfWorkShops", workshops[i].toString())
+            if (workShopId == workshops[i].id) {
+                checkWorkShopStatus = true
+                break
+            }
+        }
+
+        if (!checkWorkShopStatus) {
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                alertBuilder(workShopId, currentUserId, workshop!!.name)
+            }
+        } else {
+            Snackbar.make(binding.root, "Already applied", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun alertBuilder(workShopId: Long, currentID: Long, workshopName: String) {
         builder = AlertDialog.Builder(requireContext())
         builder.setTitle(R.string.alert_message)
             .setMessage("Do you wish to apply for $workshopName?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialogInterface, it ->
-                applyingForWorkshop(workShopId, currentID.toLong())
+                applyingForWorkshop(workShopId, currentID)
                 dialogInterface.dismiss()
             }
             .setNegativeButton("No") { dialogInterface, it ->
@@ -323,16 +356,6 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[UserWorkshopViewModel::class.java]
         userWorkshopViewModel.insertUserWorkshop(currentID, workShopId)
-        val dashboardFragment =
-            parentFragmentManager.findFragmentByTag("DashboardFragment") as DashboardFragment?
-        dashboardFragment?.getWorkShopsFromDB()
-
-        userWorkshopViewModel.userWorkshops.observe(viewLifecycleOwner, Observer { list ->
-            list?.let {
-                Log.i("FOUND", list.toString())
-            }
-        })
-        userWorkshopViewModel.getWorkshopsForUser(currentUserId.toLong())
         Snackbar.make(binding.root, "Applied Successfully", Snackbar.LENGTH_SHORT).show()
     }
 

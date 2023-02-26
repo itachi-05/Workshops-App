@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
@@ -23,18 +24,23 @@ import com.alpharays.workshops.getBooleanLiveData
 import com.alpharays.workshops.ui.workshops.WorkshopAdapter
 import com.alpharays.workshops.viewmodels.UserWorkshopViewModel
 import com.alpharays.workshops.viewmodels.WorkShopsViewModel
+import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
+
 class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentdashboardBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
+    private lateinit var sharedPreferences3: SharedPreferences
     private lateinit var userWorkshopViewModel: UserWorkshopViewModel
     private lateinit var workshopViewModel: WorkShopsViewModel
     private var currentUserId = ""
+    private lateinit var builder: AlertDialog.Builder
     private var mapOfImages: HashMap<Long, Drawable> = HashMap()
 
     override fun onCreateView(
@@ -45,15 +51,6 @@ class DashboardFragment : Fragment() {
         binding = FragmentdashboardBinding.inflate(inflater, container, false)
 
         init()
-        sharedPreferences = requireContext().getSharedPreferences(
-            "sharingUserDataUsingSP#01",
-            AppCompatActivity.MODE_PRIVATE
-        )
-        sharedPreferences2 = requireContext().getSharedPreferences(
-            "sharingUserIdUsingSP#02",
-            AppCompatActivity.MODE_PRIVATE
-        )
-        currentUserId = sharedPreferences2.getString("currentUserId", "-1").toString()
 
         val loginStatusLiveData = sharedPreferences.getBooleanLiveData("login_status", false)
 
@@ -77,6 +74,12 @@ class DashboardFragment : Fragment() {
         // Register the observer to observe changes in the login status
         loginStatusLiveData.observe(requireActivity(), loginStatusObserver)
 
+        reloadingUserData()
+
+        return binding.root
+    }
+
+    private fun reloadingUserData() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             Log.i("swiped", "true")
             Handler(Looper.getMainLooper()).postDelayed({
@@ -86,8 +89,6 @@ class DashboardFragment : Fragment() {
                 getWorkShopsFromDB()
             }, 1500)
         }
-
-        return binding.root
     }
 
     private fun init() {
@@ -116,16 +117,38 @@ class DashboardFragment : Fragment() {
             AppCompatResources.getDrawable(requireContext(), R.drawable.machinelearning)!!
         mapOfImages[17] = AppCompatResources.getDrawable(requireContext(), R.drawable.react)!!
         mapOfImages[18] = AppCompatResources.getDrawable(requireContext(), R.drawable.sde)!!
+
+        sharedPreferences = requireContext().getSharedPreferences(
+            "sharingUserDataUsingSP#01",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        sharedPreferences2 = requireContext().getSharedPreferences(
+            "sharingUserIdUsingSP#02",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        currentUserId = sharedPreferences2.getString("currentUserId", "-1").toString()
+        sharedPreferences3 = requireContext().getSharedPreferences(
+            "sharingDataUsingSP#03",
+            AppCompatActivity.MODE_PRIVATE
+        )
     }
 
-    fun getWorkShopsFromDB() {
+
+    private fun getWorkShopsFromDB() {
         binding.userWorkshopsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = WorkshopAdapter(object : WorkshopAdapter.OnApplyClickListener {
-            override fun onApplyClicked(id: Long) {
-
-            }
-        }, binding.root, requireContext(), mapOfImages)
+        val adapter = WorkshopAdapter(
+            applyButtonStatus = false,
+            deleteButtonStatus = true,
+            onDeleteClickListener = object : WorkshopAdapter.OnDeleteClickListener {
+                override fun onDeleteClicked(id: Long) {
+                    initializingUserWorkShopViewModel(id)
+                }
+            },
+            view = binding.root,
+            context = requireContext(),
+            listOfImages = mapOfImages
+        )
 
         binding.userWorkshopsRecyclerView.adapter = adapter
 
@@ -155,6 +178,7 @@ class DashboardFragment : Fragment() {
                     if (workshopList.isNotEmpty()) {
                         binding.noSavedWorkshops.visibility = View.GONE
                         binding.userWorkshopsRecyclerView.visibility = View.VISIBLE
+                        addingWorkshopListToSharedPref(ArrayList(workshopList))
                         adapter.updateList(ArrayList(workshopList))
                     } else {
                         binding.noSavedWorkshops.visibility = View.VISIBLE
@@ -204,4 +228,59 @@ class DashboardFragment : Fragment() {
 //        })
         userWorkshopViewModel.getWorkshopsForUser(currentUserId.toLong())
     }
+
+    private fun addingWorkshopListToSharedPref(arrayList: ArrayList<Workshop>) {
+//        val gson = Gson()
+//        val arrayListJsonString = gson.toJson(arrayList)
+        sharedPreferences3 =
+            requireContext().getSharedPreferences(
+                "sharingDataUsingSP#03",
+                AppCompatActivity.MODE_PRIVATE
+            )
+        val editor = sharedPreferences3.edit()
+        val set: MutableSet<String> = HashSet()
+        val gson = Gson()
+        for (workshop in arrayList) {
+            val json = gson.toJson(workshop)
+            set.add(json)
+        }
+        editor.putStringSet("workshopsList", set)
+        editor.apply()
+//        Log.i("checkingArrayList",arrayList.toString())
+//        Log.i("checkingArrayListJson",arrayListJsonString.toString())
+//        editor.putString("workshopsList", arrayListJsonString)
+//        editor.apply()
+    }
+
+
+    private fun initializingUserWorkShopViewModel(workshopId: Long) {
+        userWorkshopViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[UserWorkshopViewModel::class.java]
+        alertBuilder(currentUserId.toLong(), workshopId)
+    }
+
+    private fun alertBuilder(currentId: Long, workShopId: Long) {
+        var status = false
+        builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(R.string.alert_message)
+            .setMessage("Do you wish to unregister?")
+            .setCancelable(true)
+            .setPositiveButton("Yes") { dialogInterface, it ->
+                status = true
+                userWorkshopViewModel.deleteByUserIdAndWorkshopId(currentId, workShopId)
+                dialogInterface.dismiss()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getWorkShopsFromDB()
+                }, 500)
+                Snackbar.make(binding.root, "Deleted", Snackbar.LENGTH_LONG).show()
+            }
+            .setNegativeButton("No") { dialogInterface, it ->
+                dialogInterface.cancel()
+            }
+            .show()
+        Log.i("statusCheck", status.toString())
+    }
+
 }

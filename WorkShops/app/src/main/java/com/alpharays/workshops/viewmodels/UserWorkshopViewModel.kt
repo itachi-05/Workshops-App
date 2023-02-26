@@ -32,6 +32,10 @@ class UserWorkshopViewModel(application: Application) : AndroidViewModel(applica
         _userWorkshops.value = userWorkshopRepository.getWorkshopsForUser(userId)
     }
 
+    fun deleteByUserIdAndWorkshopId(userId: Long, workshopId: Long) = viewModelScope.launch {
+        userWorkshopRepository.deleteByUserIdAndWorkshopId(userId, workshopId)
+    }
+
 //    fun getUsersForWorkshop(workshopId: Long) = viewModelScope.launch {
 //        _userWorkshops.value = userWorkshopRepository.getUsersForWorkshop(workshopId)
 //    }

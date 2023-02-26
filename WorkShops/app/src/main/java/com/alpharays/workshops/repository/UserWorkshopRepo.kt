@@ -18,6 +18,10 @@ class UserWorkshopRepository(private val userWorkshopDao: UserWorkshopDao) {
         return userWorkshopDao.getWorkshopsForUser(userId)
     }
 
+    suspend fun deleteByUserIdAndWorkshopId(userId: Long, workshopId: Long) {
+        return userWorkshopDao.deleteByUserIdAndWorkshopId(userId, workshopId)
+    }
+
 //    suspend fun getUsersForWorkshop(workshopId: Long): List<UserWorkshop> {
 //        return userWorkshopDao.getUsersForWorkshop(workshopId)
 //    }

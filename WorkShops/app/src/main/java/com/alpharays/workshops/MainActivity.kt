@@ -23,6 +23,7 @@ import android.widget.EditText
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -38,6 +39,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
@@ -445,5 +447,6 @@ class MainActivity : AppCompatActivity() {
         registeredTxt.highlightColor = Color.TRANSPARENT
     }
     // ********************************    user register    ********************************
+
 
 }

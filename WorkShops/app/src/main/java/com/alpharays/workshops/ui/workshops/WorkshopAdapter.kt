@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,10 @@ import com.google.android.material.button.MaterialButton
 
 
 class WorkshopAdapter(
+    private var applyButtonStatus: Boolean,
+    private var deleteButtonStatus: Boolean,
     private var onApplyClickListener: OnApplyClickListener? = null,
+    private var onDeleteClickListener: OnDeleteClickListener? = null,
     private val view: View,
     private val context: Context,
     private val listOfImages: HashMap<Long, Drawable>
@@ -24,15 +28,12 @@ class WorkshopAdapter(
     RecyclerView.Adapter<WorkshopAdapter.MyViewHolder>() {
     private val workshopList = ArrayList<Workshop>()
 
-    private lateinit var builder: AlertDialog.Builder
-
-
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: CheckedTextView = itemView.findViewById(R.id.workshopName)
         val description: CheckedTextView = itemView.findViewById(R.id.workshopDescription)
         val applyBtn: MaterialButton = itemView.findViewById(R.id.applyButton)
         val workShopImage: ImageView = itemView.findViewById(R.id.workShopImage)
-
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -52,8 +53,20 @@ class WorkshopAdapter(
             Html.FROM_HTML_MODE_LEGACY
         )
 
-        holder.applyBtn.setOnClickListener {
-            onApplyClickListener?.onApplyClicked(currentWorkShop.id)
+        if (!applyButtonStatus) {
+            holder.applyBtn.visibility = View.GONE
+        } else if (applyButtonStatus) {
+            holder.applyBtn.setOnClickListener {
+                onApplyClickListener?.onApplyClicked(currentWorkShop.id)
+            }
+        }
+
+        if (!deleteButtonStatus) {
+            holder.deleteButton.visibility = View.GONE
+        } else if (deleteButtonStatus) {
+            holder.deleteButton.setOnClickListener {
+                onDeleteClickListener?.onDeleteClicked(currentWorkShop.id)
+            }
         }
 
 
@@ -76,6 +89,10 @@ class WorkshopAdapter(
 
     interface OnApplyClickListener {
         fun onApplyClicked(id: Long)
+    }
+
+    interface OnDeleteClickListener {
+        fun onDeleteClicked(id: Long)
     }
 
 }
