@@ -24,10 +24,6 @@ class WorkShopsViewModel(application: Application) : AndroidViewModel(applicatio
         repo.insert(workshop)
     }
 
-    fun deleteAllWorkShops() = viewModelScope.launch(Dispatchers.IO) {
-        repo.deleteAll()
-    }
-
     suspend fun getWorkshopById(workshopId: Long): Workshop? = repo.getWorkshopById(workshopId)
 
 }

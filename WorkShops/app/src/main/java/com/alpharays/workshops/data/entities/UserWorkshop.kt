@@ -2,10 +2,12 @@ package com.alpharays.workshops.data.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "user_workshop_table",
-    primaryKeys = ["userId", "workshopId"],
+    indices = [Index(value = ["userId", "workshopId"], unique = true)],
     foreignKeys = [
         ForeignKey(entity = User::class, parentColumns = ["id"], childColumns = ["userId"]),
         ForeignKey(entity = Workshop::class, parentColumns = ["id"], childColumns = ["workshopId"])
@@ -13,5 +15,7 @@ import androidx.room.ForeignKey
 )
 data class UserWorkshop(
     val userId: Long,
-    val workshopId: Long
+    val workshopId: Long,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0
 )

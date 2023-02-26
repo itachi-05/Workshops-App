@@ -11,6 +11,4 @@ class WorkshopRepo(private val workshopDao: WorkshopDao) {
 
     suspend fun insert(workshop: Workshop) = workshopDao.insert(workshop)
 
-    suspend fun deleteAll() = workshopDao.deleteAll()
-
 }

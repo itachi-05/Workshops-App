@@ -22,6 +22,7 @@ import com.alpharays.workshops.R
 import com.alpharays.workshops.data.entities.Workshop
 import com.alpharays.workshops.databinding.FragmentworkshopBinding
 import com.alpharays.workshops.getBooleanLiveData
+import com.alpharays.workshops.ui.dashboard.DashboardFragment
 import com.alpharays.workshops.viewmodels.UserWorkshopViewModel
 import com.alpharays.workshops.viewmodels.WorkShopsViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -35,18 +36,26 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     private var mapOfImages: HashMap<Long, Drawable> = HashMap()
     private lateinit var builder: AlertDialog.Builder
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences2: SharedPreferences
+    private var currentUserId = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         binding = FragmentworkshopBinding.inflate(inflater, container, false)
 
         init()
-
-        // clear previous Data in DB
-        deleteWorkShopsInDB()
+        sharedPreferences2 = requireContext().getSharedPreferences(
+            "sharingUserIdUsingSP#02",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        currentUserId = sharedPreferences2.getString(
+            "currentUserId",
+            "-1"
+        ).toString()
 
         // Data added in DB
         insertWorkShopsInDB()
@@ -226,15 +235,6 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     }
 
 
-    private fun deleteWorkShopsInDB() {
-        workShopsViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[WorkShopsViewModel::class.java]
-        workShopsViewModel.deleteAllWorkShops()
-    }
-
-
     private fun getWorkShopsFromDB() {
         binding.workshopsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -255,22 +255,19 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
         })
     }
 
-    private fun initializingUserWorkShopViewModel(id: Long) {
-        userWorkshopViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[UserWorkshopViewModel::class.java]
+
+    private fun initializingUserWorkShopViewModel(workshopId: Long) {
         workShopsViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[WorkShopsViewModel::class.java]
-        checkingIfUserLoggedIn(id, workShopsViewModel, userWorkshopViewModel)
+        checkingIfUserLoggedIn(workshopId, workShopsViewModel)
     }
 
+
     private fun checkingIfUserLoggedIn(
-        id: Long,
-        myWorkShopsViewModel: WorkShopsViewModel,
-        myUserWorkshopViewModel: UserWorkshopViewModel
+        workShopId: Long,
+        myWorkShopsViewModel: WorkShopsViewModel
     ) {
         sharedPreferences = requireContext().getSharedPreferences(
             "sharingUserDataUsingSP#01",
@@ -282,12 +279,12 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
         val loginStatusObserver = Observer<Boolean> { isLoggedIn ->
             if (isLoggedIn) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val workshop = myWorkShopsViewModel.getWorkshopById(id)
+                    val workshop = myWorkShopsViewModel.getWorkshopById(workShopId)
                     if (workshop != null) {
                         Log.i("workshopDetails", workshop.toString())
                         val handler = Handler(Looper.getMainLooper())
                         handler.post {
-                            alertBuilder(workshop.name)
+                            alertBuilder(workShopId, currentUserId, workshop.name)
                         }
                     } else {
                         Log.i("workshopDetails", "dbError")
@@ -303,13 +300,14 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
         loginStatusLiveData.observe(requireActivity(), loginStatusObserver)
     }
 
-    private fun alertBuilder(workshopName: String) {
+
+    private fun alertBuilder(workShopId: Long, currentID: String, workshopName: String) {
         builder = AlertDialog.Builder(requireContext())
         builder.setTitle(R.string.alert_message)
-            .setMessage("Do you wish to apply for $workshopName")
+            .setMessage("Do you wish to apply for $workshopName?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialogInterface, it ->
-                applyingForWorkshop()
+                applyingForWorkshop(workShopId, currentID.toLong())
                 dialogInterface.dismiss()
             }
             .setNegativeButton("No") { dialogInterface, it ->
@@ -318,7 +316,23 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
             .show()
     }
 
-    private fun applyingForWorkshop() {
+
+    private fun applyingForWorkshop(workShopId: Long, currentID: Long) {
+        userWorkshopViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[UserWorkshopViewModel::class.java]
+        userWorkshopViewModel.insertUserWorkshop(currentID, workShopId)
+        val dashboardFragment =
+            parentFragmentManager.findFragmentByTag("DashboardFragment") as DashboardFragment?
+        dashboardFragment?.getWorkShopsFromDB()
+
+        userWorkshopViewModel.userWorkshops.observe(viewLifecycleOwner, Observer { list ->
+            list?.let {
+                Log.i("FOUND", list.toString())
+            }
+        })
+        userWorkshopViewModel.getWorkshopsForUser(currentUserId.toLong())
         Snackbar.make(binding.root, "Applied Successfully", Snackbar.LENGTH_SHORT).show()
     }
 

@@ -32,7 +32,7 @@ class UserWorkshopViewModel(application: Application) : AndroidViewModel(applica
         _userWorkshops.value = userWorkshopRepository.getWorkshopsForUser(userId)
     }
 
-    fun getUsersForWorkshop(workshopId: Long) = viewModelScope.launch {
-        _userWorkshops.value = userWorkshopRepository.getUsersForWorkshop(workshopId)
-    }
+//    fun getUsersForWorkshop(workshopId: Long) = viewModelScope.launch {
+//        _userWorkshops.value = userWorkshopRepository.getUsersForWorkshop(workshopId)
+//    }
 }

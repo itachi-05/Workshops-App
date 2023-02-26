@@ -15,6 +15,7 @@ interface UserWorkshopDao {
     @Query("SELECT * FROM user_workshop_table WHERE userId = :userId")
     suspend fun getWorkshopsForUser(userId: Long): List<UserWorkshop>
 
-    @Query("SELECT * FROM user_workshop_table WHERE workshopId = :workshopId")
-    suspend fun getUsersForWorkshop(workshopId: Long): List<UserWorkshop>
+//    @Query("SELECT * FROM user_workshop_table WHERE workshopId = :workshopId")
+//    suspend fun getUsersForWorkshop(workshopId: Long): List<UserWorkshop>
+
 }

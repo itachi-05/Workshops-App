@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var builder: AlertDialog.Builder
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences2: SharedPreferences
     private var loginUserEmail = ""
     private var loginUserPwd = ""
     private var registerUserEmail = ""
@@ -163,11 +164,13 @@ class MainActivity : AppCompatActivity() {
                             .show()
                     } else {
                         var pwd = ""
+                        var id = ""
                         var validUser = false
                         for (i in users.indices) {
                             if (users[i].email == loginUserEmail) {
                                 validUser = true
                                 pwd = users[i].password
+                                id = users[i].id.toString()
                                 break
                             }
                         }
@@ -178,6 +181,9 @@ class MainActivity : AppCompatActivity() {
                                 val editor = sharedPreferences.edit()
                                 editor.putBoolean("login_status", true)
                                 editor.apply()
+                                sharedPreferences2 =
+                                    getSharedPreferences("sharingUserIdUsingSP#02", MODE_PRIVATE)
+                                sharedPreferences2.edit().putString("currentUserId", id).apply()
                                 binding.userStatusBtn.text = "Sign Out"
                                 Log.i("checkingEmail_and_Pwd", "$loginUserEmail && $loginUserPwd")
                                 loginUserEmail = ""; loginUserPwd = ""

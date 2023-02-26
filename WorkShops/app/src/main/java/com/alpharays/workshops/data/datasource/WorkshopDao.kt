@@ -6,11 +6,8 @@ import com.alpharays.workshops.data.entities.Workshop
 
 @Dao
 interface WorkshopDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(workshop: Workshop)
-
-    @Query("DELETE FROM workshops_table")
-    suspend fun deleteAll()
 
     @Query("SELECT * FROM workshops_table WHERE id = :workshopId")
     fun getWorkshopById(workshopId: Long): Workshop?

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alpharays.workshops.R
 import com.alpharays.workshops.data.entities.Workshop
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 
 
 class WorkshopAdapter(
