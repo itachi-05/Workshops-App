@@ -329,11 +329,23 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val user = User(email = registerUserEmail, password = registerUserPwd)
                 usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
-                usersViewModel.statusResponse.observe(this, Observer {
+//                usersViewModel.allUsers.observe(this, Observer { users ->
+//                    if(users.isNotEmpty()){
+//                        for(i in users.indices){
+//                            Log.i("checkingUsers",users[i].toString())
+//                        }
+//                    }
+//                    else{
+//                        Log.i("NO USERS","PRESENT")
+//                    }
+//                })
+                usersViewModel.statusResponse1.observe(this, Observer {
                     if (it != null) {
                         if (it == true) {
+                            usersViewModel.insertUser(user)
                             popupWindow.dismiss()
                             Snackbar.make(binding.root, "Registered", Snackbar.LENGTH_SHORT).show()
+                            showingLoginPage()
                             registerUserEmail = ""; registerUserPwd = ""
                         } else {
                             Snackbar.make(
@@ -342,7 +354,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 })
-                usersViewModel.insertUser(user)
+                usersViewModel.checkUser(user.email)
             }
         }
     }
