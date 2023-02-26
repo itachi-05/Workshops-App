@@ -1,5 +1,6 @@
 package com.alpharays.workshops
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.database.sqlite.SQLiteConstraintException
@@ -13,11 +14,9 @@ import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.widget.CheckedTextView
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -25,6 +24,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -134,10 +134,20 @@ class MainActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.layoutlogin, null)
         val popupWindow = PopupWindow(
             popupView,
-            580,
-            780,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             true
         )
+
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+        popupWindow.width = width-150
+        popupWindow.height = height-600
+
+        val padding = 30
+        popupView.setPadding(padding, padding, padding, padding)
         popupWindow.setBackgroundDrawable(
             ColorDrawable(
                 ContextCompat.getColor(
@@ -147,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
         popupWindow.animationStyle = R.style.PopupAnimation
-        popupWindow.showAtLocation(popupView, Gravity.CENTER_VERTICAL, 0, 0)
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
         movingToRegisterPage(popupWindow, popupView)
         loggingInUser(popupWindow, popupView)
     }
@@ -294,10 +304,20 @@ class MainActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.layoutregister, null)
         val popupWindow = PopupWindow(
             popupView,
-            580,
-            780,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             true
         )
+
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+        popupWindow.width = width-150
+        popupWindow.height = height-600
+
+        val padding = 30
+        popupView.setPadding(padding, padding, padding, padding)
         popupWindow.setBackgroundDrawable(
             ColorDrawable(
                 ContextCompat.getColor(
@@ -307,7 +327,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
         popupWindow.animationStyle = R.style.PopupAnimation
-        popupWindow.showAtLocation(popupView, Gravity.CENTER_VERTICAL, 0, 0)
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
         movingToSignInPage(popupWindow, popupView)
         registeringUser(popupWindow, popupView)
     }
@@ -459,6 +479,19 @@ class MainActivity : AppCompatActivity() {
         registeredTxt.highlightColor = Color.TRANSPARENT
     }
     // ********************************    user register    ********************************
+
+
+    object PixelUtils {
+        fun convertPixelsToDp(context: Context, pixels: Int): Int {
+            val density = context.resources.displayMetrics.density
+            return (pixels / density).toInt()
+        }
+
+        fun convertDpToPixels(context: Context, dp: Int): Int {
+            val density = context.resources.displayMetrics.density
+            return (dp * density).toInt()
+        }
+    }
 
 
 }

@@ -290,7 +290,7 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
                 }
             } else {
                 (activity as MainActivity).showingLoginPage()
-                Snackbar.make(binding.root, "Login to apply", Snackbar.LENGTH_SHORT).show()
+//                Snackbar.make(binding.root, "Login to apply", Snackbar.LENGTH_SHORT).show()
             }
         }
 

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:background="@drawable/bglayout2">
+    android:background="@drawable/bglayout2"
+    android:padding="16dp">
 
     <CheckedTextView
         android:id="@+id/loginPage"
@@ -23,7 +23,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
         android:clickable="true"

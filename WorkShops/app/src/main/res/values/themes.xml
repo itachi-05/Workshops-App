@@ -12,7 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">#2962FF</item>
         <!-- Customize your theme here. -->
-        <item name="snackbarStyle">@style/custom_snackbar_message_style</item>
+<!--        <item name="snackbarStyle">@style/custom_snackbar_message_style</item>-->
     </style>
 
     <!--    for tab text appearance -->
