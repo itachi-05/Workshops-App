@@ -7,31 +7,19 @@
     android:layout_margin="5dp"
     android:background="@drawable/bglayout2">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.12" />
-
     <CheckedTextView
-        android:id="@+id/registerPage"
+        android:id="@+id/loginPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
         android:fontFamily="sans-serif-medium"
+        android:padding="5dp"
         android:text="Login"
         android:textColor="@color/black"
         android:textSize="36sp"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
-        app:layout_constraintTop_toTopOf="@id/guideline" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.08" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
@@ -44,8 +32,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registerPage"
-        app:layout_constraintWidth_percent="0.83">
+        app:layout_constraintTop_toBottomOf="@id/loginPage"
+        app:layout_constraintWidth_percent="0.93">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -78,7 +66,6 @@
                         android:inputType="textEmailAddress" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/loginUserPwdLayout"
@@ -145,8 +132,6 @@
 
         </ScrollView>
 
-
     </com.google.android.material.card.MaterialCardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

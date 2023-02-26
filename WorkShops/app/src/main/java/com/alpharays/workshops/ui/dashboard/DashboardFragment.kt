@@ -58,12 +58,14 @@ class DashboardFragment : Fragment() {
         val loginStatusObserver = Observer<Boolean> { isLoggedIn ->
             if (isLoggedIn) {
                 // User is logged in, show the logout button
+                binding.swipeRefreshLayout.visibility = View.VISIBLE
                 binding.notLoggedInImg.visibility = View.GONE
                 binding.cardView.visibility = View.GONE
                 getWorkShopsFromDB()
-
+                reloadingUserData()
             } else {
                 // User is not logged in, show the login button
+                binding.swipeRefreshLayout.visibility = View.GONE
                 binding.notLoggedInImg.visibility = View.VISIBLE
                 binding.cardView.visibility = View.VISIBLE
                 binding.noSavedWorkshops.visibility = View.GONE
@@ -73,8 +75,6 @@ class DashboardFragment : Fragment() {
 
         // Register the observer to observe changes in the login status
         loginStatusLiveData.observe(requireActivity(), loginStatusObserver)
-
-        reloadingUserData()
 
         return binding.root
     }

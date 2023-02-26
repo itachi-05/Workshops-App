@@ -7,7 +7,6 @@
     android:background="#FFC7C7"
     tools:context=".MainActivity">
 
-
     <CheckedTextView
         android:id="@+id/appNameTxt"
         android:layout_width="wrap_content"
@@ -18,7 +17,7 @@
         android:text="Workshops"
         android:textColor="@color/black"
         android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="@+id/viewR1"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,19 +30,16 @@
         android:text="Login/Register"
         android:textAllCaps="false"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/viewR1"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/viewR1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.07"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.07" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/MyViewPager"
@@ -51,22 +47,18 @@
         android:layout_height="0dp"
         android:background="@color/white"
         android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@id/viewR2"
+        app:layout_constraintBottom_toTopOf="@id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.86"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewR1" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline1" />
 
-
-    <View
-        android:id="@+id/viewR2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.07"
-        app:layout_constraintStart_toStartOf="parent" />
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.93" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/myTabLayout"
@@ -76,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/viewR2"
+        app:layout_constraintTop_toTopOf="@id/guideline2"
         app:tabIndicatorColor="#DD2C00"
         app:tabRippleColor="#C1E7FF"
         app:tabTextAppearance="@style/MyCustomTabTextAppearance" />

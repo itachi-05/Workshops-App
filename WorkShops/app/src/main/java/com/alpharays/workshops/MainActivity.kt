@@ -134,8 +134,8 @@ class MainActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.layoutlogin, null)
         val popupWindow = PopupWindow(
             popupView,
-            575,
-            800,
+            580,
+            780,
             true
         )
         popupWindow.setBackgroundDrawable(
@@ -294,8 +294,8 @@ class MainActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.layoutregister, null)
         val popupWindow = PopupWindow(
             popupView,
-            575,
-            800,
+            580,
+            780,
             true
         )
         popupWindow.setBackgroundDrawable(
