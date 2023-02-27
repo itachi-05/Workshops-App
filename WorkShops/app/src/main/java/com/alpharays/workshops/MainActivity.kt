@@ -59,14 +59,14 @@ class MainActivity : AppCompatActivity() {
         val loginStatusObserver = Observer<Boolean> { isLoggedIn ->
             if (isLoggedIn) {
                 // User is logged in, show the logout button
-                binding.userStatusBtn.text = R.string.logout.toString()
+                binding.userStatusBtn.text = "Logout"
                 binding.userStatusBtn.setOnClickListener {
                     // Handle logout action
                     confirmingLogOut()
                 }
             } else {
                 // User is not logged in, show the login button
-                binding.userStatusBtn.text = R.string.loginRegister.toString()
+                binding.userStatusBtn.text = "Login/Register"
                 binding.userStatusBtn.setOnClickListener {
                     // Handle login action
                     showingLoginPage()
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Do you wish to Log Out?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialogInterface, it ->
-                binding.userStatusBtn.text = R.string.loginRegister.toString()
+                binding.userStatusBtn.text = "Login/Register"
                 sharedPreferences = getSharedPreferences("sharingUserDataUsingSP#01", MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("login_status", false)
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                                 sharedPreferences2 =
                                     getSharedPreferences("sharingUserIdUsingSP#02", MODE_PRIVATE)
                                 sharedPreferences2.edit().putString("currentUserId", id).apply()
-                                binding.userStatusBtn.text = R.string.signout.toString()
+                                binding.userStatusBtn.text = "Sign Out"
                                 Log.i("checkingEmail_and_Pwd", "$loginUserEmail && $loginUserPwd")
                                 loginUserEmail = ""; loginUserPwd = ""
                                 popupWindow.dismiss()
