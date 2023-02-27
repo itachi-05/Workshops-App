@@ -2,7 +2,6 @@ package com.alpharays.workshops
 
 
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.alpharays.workshops.MainActivity
 import com.alpharays.workshops.ui.dashboard.DashboardFragment
 import com.alpharays.workshops.ui.workshops.WorkshopsFragment
 

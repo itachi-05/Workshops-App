@@ -1,10 +1,12 @@
 package com.alpharays.workshops.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.alpharays.workshops.data.datasource.AppDatabase
 import com.alpharays.workshops.data.entities.UserWorkshop
-import com.alpharays.workshops.repository.UserDetailsRepo
 import com.alpharays.workshops.repository.UserWorkshopRepository
 import kotlinx.coroutines.launch
 

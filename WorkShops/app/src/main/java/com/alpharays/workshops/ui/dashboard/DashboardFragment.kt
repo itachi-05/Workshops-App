@@ -81,7 +81,7 @@ class DashboardFragment : Fragment() {
 
     private fun reloadingUserData() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.i("swiped", "true")
+            Log.i("swiped123", "true123")
             Handler(Looper.getMainLooper()).postDelayed({
                 if (binding.swipeRefreshLayout.isRefreshing) {
                     binding.swipeRefreshLayout.isRefreshing = false
@@ -230,8 +230,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun addingWorkshopListToSharedPref(arrayList: ArrayList<Workshop>) {
-//        val gson = Gson()
-//        val arrayListJsonString = gson.toJson(arrayList)
         sharedPreferences3 =
             requireContext().getSharedPreferences(
                 "sharingDataUsingSP#03",
@@ -246,10 +244,6 @@ class DashboardFragment : Fragment() {
         }
         editor.putStringSet("workshopsList", set)
         editor.apply()
-//        Log.i("checkingArrayList",arrayList.toString())
-//        Log.i("checkingArrayListJson",arrayListJsonString.toString())
-//        editor.putString("workshopsList", arrayListJsonString)
-//        editor.apply()
     }
 
 
@@ -274,7 +268,7 @@ class DashboardFragment : Fragment() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     getWorkShopsFromDB()
                 }, 500)
-                Snackbar.make(binding.root, "Deleted", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, "Deleted", 700).show()
             }
             .setNegativeButton("No") { dialogInterface, it ->
                 dialogInterface.cancel()

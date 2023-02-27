@@ -1,14 +1,10 @@
 package com.alpharays.workshops
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
-import android.database.sqlite.SQLiteConstraintException
-import android.database.sqlite.SQLiteException
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -20,32 +16,25 @@ import android.view.*
 import android.widget.CheckedTextView
 import android.widget.EditText
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.TooltipCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.alpharays.workshops.data.entities.User
-import com.alpharays.workshops.data.entities.Workshop
 import com.alpharays.workshops.databinding.ActivityMainBinding
 import com.alpharays.workshops.viewmodels.UsersViewModel
-import com.alpharays.workshops.viewmodels.WorkShopsViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private lateinit var myViewPager: ViewPager2
     private lateinit var binding: ActivityMainBinding
-    private lateinit var auth: FirebaseAuth
     private lateinit var builder: AlertDialog.Builder
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
@@ -70,14 +59,14 @@ class MainActivity : AppCompatActivity() {
         val loginStatusObserver = Observer<Boolean> { isLoggedIn ->
             if (isLoggedIn) {
                 // User is logged in, show the logout button
-                binding.userStatusBtn.text = "Logout"
+                binding.userStatusBtn.text = R.string.logout.toString()
                 binding.userStatusBtn.setOnClickListener {
                     // Handle logout action
                     confirmingLogOut()
                 }
             } else {
                 // User is not logged in, show the login button
-                binding.userStatusBtn.text = "Login/Register"
+                binding.userStatusBtn.text = R.string.loginRegister.toString()
                 binding.userStatusBtn.setOnClickListener {
                     // Handle login action
                     showingLoginPage()
@@ -115,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Do you wish to Log Out?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialogInterface, it ->
-                binding.userStatusBtn.text = "Login/Register"
+                binding.userStatusBtn.text = R.string.loginRegister.toString()
                 sharedPreferences = getSharedPreferences("sharingUserDataUsingSP#01", MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("login_status", false)
@@ -127,7 +116,6 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
-
 
     // ********************************    user login    ********************************
     fun showingLoginPage() {
@@ -143,8 +131,8 @@ class MainActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
-        popupWindow.width = width-150
-        popupWindow.height = height-600
+        popupWindow.width = width - 150
+        popupWindow.height = height - 600
 
         val padding = 30
         popupView.setPadding(padding, padding, padding, padding)
@@ -167,12 +155,12 @@ class MainActivity : AppCompatActivity() {
         val loginButton = popupView?.findViewById<MaterialButton>(R.id.loginUserBtn)
         loginButton?.setOnClickListener {
             if (!isValidEmail1(loginUserEmail)) {
-                Snackbar.make(binding.root, "Enter correct email", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, "Enter correct email", 700).show()
             } else {
                 usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
                 usersViewModel.allUsers.observe(this, Observer { users ->
                     if (users.isEmpty()) {
-                        Snackbar.make(binding.root, "Account not found", Snackbar.LENGTH_SHORT)
+                        Snackbar.make(binding.root, "Account not found", 700)
                             .show()
                     } else {
                         var pwd = ""
@@ -196,18 +184,18 @@ class MainActivity : AppCompatActivity() {
                                 sharedPreferences2 =
                                     getSharedPreferences("sharingUserIdUsingSP#02", MODE_PRIVATE)
                                 sharedPreferences2.edit().putString("currentUserId", id).apply()
-                                binding.userStatusBtn.text = "Sign Out"
+                                binding.userStatusBtn.text = R.string.signout.toString()
                                 Log.i("checkingEmail_and_Pwd", "$loginUserEmail && $loginUserPwd")
                                 loginUserEmail = ""; loginUserPwd = ""
                                 popupWindow.dismiss()
-                                Snackbar.make(binding.root, "Welcome back", Snackbar.LENGTH_SHORT)
+                                Snackbar.make(binding.root, "Welcome back", 700)
                                     .show()
                             } else {
-                                Snackbar.make(binding.root, "Wrong password", Snackbar.LENGTH_SHORT)
+                                Snackbar.make(binding.root, "Wrong password", 700)
                                     .show()
                             }
                         } else {
-                            Snackbar.make(binding.root, "Account not found", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(binding.root, "Account not found", 700)
                                 .show()
                         }
                     }
@@ -313,8 +301,8 @@ class MainActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
-        popupWindow.width = width-150
-        popupWindow.height = height-600
+        popupWindow.width = width - 150
+        popupWindow.height = height - 600
 
         val padding = 30
         popupView.setPadding(padding, padding, padding, padding)
@@ -339,12 +327,12 @@ class MainActivity : AppCompatActivity() {
             registerUserEmail = reorderEmail(registerUserEmail)
             popupView.findViewById<EditText>(R.id.registerUserEmail)?.setText(registerUserEmail)
             if (!isValidEmail2(registerUserEmail) || registerUserEmail.isEmpty()) {
-                Snackbar.make(binding.root, "Enter correct email", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, "Enter correct email", 700).show()
             } else if (!pwdValid(registerUserPwd) || registerUserPwd.isEmpty() || registerUserPwd.length < 8) {
                 Snackbar.make(
                     binding.root,
                     "Should not contain spaces and should be of minimum 8 characters",
-                    Snackbar.LENGTH_SHORT
+                    700
                 ).show()
             } else {
                 val user = User(email = registerUserEmail, password = registerUserPwd)
@@ -364,12 +352,12 @@ class MainActivity : AppCompatActivity() {
                         if (it == true) {
                             usersViewModel.insertUser(user)
                             popupWindow.dismiss()
-                            Snackbar.make(binding.root, "Registered", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, "Registered", 700).show()
                             showingLoginPage()
                             registerUserEmail = ""; registerUserPwd = ""
                         } else {
                             Snackbar.make(
-                                binding.root, "Email already exists", Snackbar.LENGTH_SHORT
+                                binding.root, "Email already exists", 700
                             ).show()
                         }
                     }
@@ -479,19 +467,4 @@ class MainActivity : AppCompatActivity() {
         registeredTxt.highlightColor = Color.TRANSPARENT
     }
     // ********************************    user register    ********************************
-
-
-    object PixelUtils {
-        fun convertPixelsToDp(context: Context, pixels: Int): Int {
-            val density = context.resources.displayMetrics.density
-            return (pixels / density).toInt()
-        }
-
-        fun convertDpToPixels(context: Context, dp: Int): Int {
-            val density = context.resources.displayMetrics.density
-            return (dp * density).toInt()
-        }
-    }
-
-
 }

@@ -27,3 +27,28 @@ fun SharedPreferences.getBooleanLiveData(
         }
     }
 }
+
+
+fun SharedPreferences.getStringSetLiveData(
+    key: String,
+    defaultValue: Set<String>
+): LiveData<Set<String>> {
+    return object : MutableLiveData<Set<String>>(getStringSet(key, defaultValue)) {
+        private val listener =
+            SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                if (key == key) {
+                    value = getStringSet(key, defaultValue)
+                }
+            }
+
+        override fun onActive() {
+            super.onActive()
+            registerOnSharedPreferenceChangeListener(listener)
+        }
+
+        override fun onInactive() {
+            super.onInactive()
+            unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+}

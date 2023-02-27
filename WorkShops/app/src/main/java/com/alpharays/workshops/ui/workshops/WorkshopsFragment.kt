@@ -26,9 +26,9 @@ import com.alpharays.workshops.viewmodels.UserWorkshopViewModel
 import com.alpharays.workshops.viewmodels.WorkShopsViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     private lateinit var binding: FragmentworkshopBinding
@@ -290,7 +290,6 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
                 }
             } else {
                 (activity as MainActivity).showingLoginPage()
-//                Snackbar.make(binding.root, "Login to apply", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -299,13 +298,12 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     }
 
     private fun validatingId(workshop: Workshop?, workShopId: Long, currentUserId: Long) {
-        sharedPreferences3 =
-            requireContext().getSharedPreferences(
-                "sharingDataUsingSP#03",
-                AppCompatActivity.MODE_PRIVATE
-            )
+        // old sharedPreferences Work
+        sharedPreferences3 = requireContext().getSharedPreferences(
+            "sharingDataUsingSP#03",
+            AppCompatActivity.MODE_PRIVATE
+        )
         val arrayListJsonString = sharedPreferences3.getStringSet("workshopsList", null)
-
         val gson = Gson()
         val workshops = mutableListOf<Workshop>()
         if (arrayListJsonString != null) {
@@ -322,25 +320,169 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
                 break
             }
         }
-
         if (!checkWorkShopStatus) {
-            val handler = Handler(Looper.getMainLooper())
-            handler.post {
-                alertBuilder(workShopId, currentUserId, workshop!!.name)
+            val handlerNew = Handler(Looper.getMainLooper())
+            handlerNew.post {
+                alertBuilder(workShopId, currentUserId, workshop?.name.toString(), workshops)
             }
         } else {
-            Snackbar.make(binding.root, "Already applied", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "Already applied", 700).show()
         }
+
+        // ############################################   TESTING#012 (closed) ############################################
+        //  *****************************************  new Shared Pref *****************************************
+//        sharedPreferences3 = requireContext().getSharedPreferences("sharingDataUsingSP#03",AppCompatActivity.MODE_PRIVATE)
+//        val workshopsStatusLiveData = sharedPreferences3.getStringSetLiveData("workshopsList", emptySet())
+
+        // Create an Observer to update the UI when the login status changes
+
+//        val gson = Gson()
+//        val handler = Handler(Looper.getMainLooper())
+//        handler.post {
+//            val workshopsStatusObserver = Observer<Set<String>> { workshopsJsonSet ->
+//                val workshopsList = workshopsJsonSet.mapNotNull { json ->
+//                    gson.fromJson(json, Workshop::class.java)
+//                }.toMutableList()
+//                // Do something with the workshopsList
+//                var checkWorkShopStatus = false
+//                for (i in workshopsList.indices) {
+//                    Log.i("finalCheckingOfWorkShops", workshopsList[i].toString())
+//                    if (workShopId == workshopsList[i].id) {
+//                        checkWorkShopStatus = true
+//                        break
+//                    }
+//                }
+//                if (!checkWorkShopStatus) {
+//                    val handlerNew = Handler(Looper.getMainLooper())
+//                    handlerNew.post {
+//                        alertBuilder(workShopId,currentUserId,workshop?.name.toString(),workshopsList)
+//                    }
+//                } else {
+//                    Snackbar.make(binding.root, "Already applied", Snackbar.LENGTH_SHORT).show()
+//                }
+//            }
+//            // Register the observer to observe changes in the login status
+//            workshopsStatusLiveData.observe(this, workshopsStatusObserver)
+//        }
+
+        //  *****************************************  new Shared Pref *****************************************
+
+
+        // checking if already exists or not
+
+//        workShopsViewModel = ViewModelProvider(
+//            this,
+//            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+//        )[WorkShopsViewModel::class.java]
+//
+//        userWorkshopViewModel = ViewModelProvider(
+//            this,
+//            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+//        )[UserWorkshopViewModel::class.java]
+//
+//        val handler = Handler(Looper.getMainLooper())
+//        handler.post {
+//            userWorkshopViewModel.userWorkshops.observe(viewLifecycleOwner, Observer { list ->
+//                list?.let {
+//                    lifecycleScope.launch {
+//                        val deferredWorkshops = it.map { userWorkshop ->
+//                            async(Dispatchers.IO) {
+//                                val workshopDetails =
+//                                    workShopsViewModel.getWorkshopById(userWorkshop.workshopId)
+//                                workshopDetails
+//                            }
+//                        }
+//                        var status = true
+//                        val workshopList = deferredWorkshops.awaitAll().filterNotNull()
+//                        if (workshopList.isNotEmpty()) {
+//                            for (i in workshopList.indices) {
+//                                if (workshopList[i].id == workShopId) {
+//                                    status = false
+//                                    Snackbar.make(
+//                                        binding.root,
+//                                        "Already applied",
+//                                        Snackbar.LENGTH_SHORT
+//                                    ).show()
+//                                    break
+//                                }
+//                            }
+//                            if (status) {
+//                                alertBuilder(workShopId, currentUserId, workshop!!.name)
+//                            }
+//                        }
+//                    }
+//                }
+//            })
+//        }
+//
+//
+//        userWorkshopViewModel.getWorkshopsForUser(currentUserId)
+
+
+//        val handler = Handler(Looper.getMainLooper())
+//        handler.post {
+//            userWorkshopViewModel.userWorkshops.observe(this, Observer { userWorkshops ->
+//                if (userWorkshops != null && userWorkshops.isNotEmpty()) {
+//                    var status = true
+//                    val deferredWorkshops = userWorkshops.map { userWorkshop ->
+//                        async(Dispatchers.IO) {
+//                            userWorkshopViewModel.getWorkshopsForUser(userWorkshop.workshopId)
+//                        }
+//                    }
+//                    lifecycleScope.launch {
+//                        val workshopList = deferredWorkshops.awaitAll().filterNotNull()
+//                        for (workshop in workshopList) {
+//                            if (workshop.workshopId == workShopId) {
+//                                status = false
+//                                Snackbar.make(
+//                                    binding.root,
+//                                    "Already applied",
+//                                    Snackbar.LENGTH_SHORT
+//                                ).show()
+//                                break
+//                            }
+//                        }
+//                        if (status) {
+//                            alertBuilder(workShopId, currentUserId, workshop!!.name)
+//                        }
+//                    }
+//                }
+//            })
+
+//            userWorkshopViewModel.userWorkshops.observe(this, Observer {
+//                if (it != null && it.isNotEmpty()) {
+//                    var status = true
+//                    for (i in it.indices) {
+//                        Log.i("checkingAlreadyExisting", it[i].toString())
+//                        if (it[i].workshopId == workShopId) {
+//                            status = false
+//                            Snackbar.make(binding.root, "Already applied", Snackbar.LENGTH_SHORT)
+//                                .show()
+//                            break
+//                        }
+//                    }
+//                    if (status) {
+//                        alertBuilder(workShopId, currentUserId, workshop!!.name)
+//                    }
+//                }
+//            })
+//        }
+        // ############################################   TESTING#012 (closed) ############################################
     }
 
 
-    private fun alertBuilder(workShopId: Long, currentID: Long, workshopName: String) {
+    private fun alertBuilder(
+        workShopId: Long,
+        currentID: Long,
+        workshopName: String,
+        workshopsList: MutableList<Workshop>
+    ) {
         builder = AlertDialog.Builder(requireContext())
         builder.setTitle(R.string.alert_message)
             .setMessage("Do you wish to apply for $workshopName?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialogInterface, it ->
-                applyingForWorkshop(workShopId, currentID)
+                applyingForWorkshop(workShopId, currentID, workshopsList)
                 dialogInterface.dismiss()
             }
             .setNegativeButton("No") { dialogInterface, it ->
@@ -350,13 +492,41 @@ class WorkshopsFragment : Fragment(R.layout.fragmentworkshop) {
     }
 
 
-    private fun applyingForWorkshop(workShopId: Long, currentID: Long) {
+    private fun applyingForWorkshop(
+        workShopId: Long,
+        currentID: Long,
+        workshopsList: MutableList<Workshop>
+    ) {
         userWorkshopViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[UserWorkshopViewModel::class.java]
         userWorkshopViewModel.insertUserWorkshop(currentID, workShopId)
-        Snackbar.make(binding.root, "Applied Successfully", Snackbar.LENGTH_SHORT).show()
-    }
 
+        workShopsViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[WorkShopsViewModel::class.java]
+        lifecycleScope.launch(Dispatchers.IO) {
+            val workShopToBeAdded = workShopsViewModel.getWorkshopById(workShopId)
+            workshopsList.add(workShopToBeAdded!!)
+            // adding updated data to sharedPref
+            sharedPreferences3 = requireContext().getSharedPreferences(
+                "sharingDataUsingSP#03",
+                AppCompatActivity.MODE_PRIVATE
+            )
+            val editor = sharedPreferences3.edit()
+            val set: MutableSet<String> = HashSet()
+            val gson = Gson()
+            for (workshop in workshopsList) {
+                val json = gson.toJson(workshop)
+                set.add(json)
+            }
+            editor.putStringSet("workshopsList", set)
+            editor.apply()
+            // done adding
+        }
+
+        Snackbar.make(binding.root, "Applied Successfully", 700).show()
+    }
 }
